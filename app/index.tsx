@@ -1,24 +1,41 @@
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { SignInForm } from "@/components/auth/SignInForm";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
-import { Switch } from "@/components/ui/Switch";
 import { Title } from "@/components/ui/Title";
-import { useTheme } from "@/themes/ThemeContext";
+import { Theme, useTheme } from "@/themes/ThemeContext";
+import { Link } from "expo-router";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function Index() {
-  const { switchTheme } = useTheme();
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
 
   return (
     <ScreenContainer>
-      <Title>
-        Boas Vindas
-      </Title>
-      <Input placeholder="Escreva aqui..." />
-      <Switch label="Teste" value={false} onValueChange={() => { }} />
-      <Button
-        title="Switch theme"
-        onPress={() => switchTheme()}
-      />
+      <View style={styles.formContainer}>
+        <Title align="center">Sign in with your email</Title>
+        <SignInForm />
+        <Text style={styles.footerText}>
+          Don't have an account?
+          {' '}
+          <Link href={'/signup'} style={styles.linkText}>Sign Up</Link>
+        </Text>
+      </View>
     </ScreenContainer>
   );
 }
+
+const createStyles = (theme: Theme) => StyleSheet.create({
+  formContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  footerText: {
+    marginTop: theme.spacing.lg,
+    color: theme.colors.secondary,
+    textAlign: 'center',
+  },
+  linkText: {
+    color: theme.colors.primary,
+    fontWeight: '600',
+  },
+});
