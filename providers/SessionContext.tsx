@@ -64,7 +64,6 @@ export const SessionProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    router.dismissAll();
     router.replace('/');
     setSession(null);
   }

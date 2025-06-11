@@ -3,13 +3,21 @@ import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { Title } from "@/components/ui/Title";
 import { useSession } from "@/providers/SessionContext";
 import { Theme, useTheme } from "@/themes/ThemeContext";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function Index() {
   const { theme } = useTheme();
   const styles = createStyles(theme);
-  const { user } = useSession();
+  const { user, session } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (session) {
+      router.replace('/home');
+    }
+  }, [session, router]);
 
   return (
     <ScreenContainer>
