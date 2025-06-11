@@ -1,3 +1,4 @@
+import { useSession } from "@/providers/SessionContext";
 import { useTheme } from "@/themes/ThemeContext";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -7,6 +8,7 @@ import { Input } from "../ui/Input";
 
 export const SignUpForm = () => {
   const { theme } = useTheme();
+  const { signUp } = useSession();
   const router = useRouter();
 
   const [name, setName] = useState('');
@@ -14,12 +16,23 @@ export const SignUpForm = () => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
+    setLoading(true);
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match!')
       return;
     }
+
+    await signUp({ name, email, phone, password });
+
+    setName('');
+    setEmail('');
+    setPhone('');
+    setPassword('');
+    setConfirmPassword('');
+    setLoading(false);
 
     router.push('/confirm-email');
   }
@@ -63,7 +76,7 @@ export const SignUpForm = () => {
         />
       </View>
 
-      <Button title="Sign Up" onPress={handleSignUp} />
+      <Button title="Sign Up" disabled={loading} loading={loading} onPress={handleSignUp} />
     </>
   )
 }

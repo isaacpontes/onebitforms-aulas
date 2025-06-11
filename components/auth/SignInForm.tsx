@@ -1,17 +1,24 @@
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { useSession } from "@/providers/SessionContext";
 import { useTheme } from "@/themes/ThemeContext";
 import { useState } from "react";
 import { View } from "react-native";
 
 export const SignInForm = () => {
   const { theme } = useTheme();
+  const { signIn } = useSession();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSignIn = () => {
-
+  const handleSignIn = async () => {
+    setLoading(true);
+    await signIn(email, password);
+    setEmail('');
+    setPassword('');
+    setLoading(false);
   }
 
   return (
@@ -33,7 +40,7 @@ export const SignInForm = () => {
         />
       </View>
 
-      <Button title="Sign In" onPress={handleSignIn} />
+      <Button title="Sign In" disabled={loading} loading={loading} onPress={handleSignIn} />
     </>
   )
 }

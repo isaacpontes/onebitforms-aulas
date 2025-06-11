@@ -49,6 +49,7 @@ export const Button: FC<Props> = ({
       style={[
         styles.button,
         variantStyles[variant],
+        disabled && { opacity: theme.opacity.disabled },
         style
       ]}
     >
