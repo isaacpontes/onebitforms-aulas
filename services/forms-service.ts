@@ -5,9 +5,19 @@ export type Form = {
   id: string;
   userId: string;
   title: string;
-  description: string;
+  description?: string;
   isPublished: boolean;
   createdAt: string;
+}
+
+export type Field = {
+  id: string;
+  kind: 'short_text' | 'long_text' | 'single_option' | 'multiple_option'
+  label: string;
+  options?: string[];
+  isRequired: boolean;
+  fieldOrder: number;
+  formId: string;
 }
 
 const formsService = {
@@ -45,6 +55,7 @@ const formsService = {
         id,
         userId: user_id,
         title,
+        description,
         isPublished: is_published,
         createdAt: created_at
       `)
@@ -57,7 +68,7 @@ const formsService = {
       return [];
     }
 
-    return data as Omit<Form, 'description'>[];
+    return data as Form[];
   },
 
   // Obter os dados detalhados de um formulário
@@ -98,29 +109,29 @@ const formsService = {
     if (fieldsError) {
       console.log(fieldsError);
       Alert.alert('Error', 'Error loading the form fields data');
-      return form;
+      return { form };
     }
 
     const { count: responseCount } = await supabase
       .from('form_responses')
       .select('id', { count: 'exact', head: true })
       .eq('form_id', form.id);
-    
+
     return {
-      ...form,
-      fields: fields || [],
+      form,
+      fields: fields || [] as Field[],
       responseCount
     }
   },
 
   // Obter as respostas de um formulário
   getFormResponses: async (formId: string) => {
-    const { data, error} = await supabase
+    const { data, error } = await supabase
       .from('form_responses')
       .select('id, formId: form_id, submittedAt: submitted_at, answers, metadata')
       .eq('form_id', formId)
       .order('')
-    
+
     if (error || !data) {
       console.log(error);
       Alert.alert('Error', 'Error fetching the form responses.');
@@ -142,7 +153,7 @@ const formsService = {
       .from('forms')
       .update(payload)
       .eq('id', formId);
-    
+
     if (error) {
       console.log(error);
       Alert.alert('Error', 'Error updating the form.');
