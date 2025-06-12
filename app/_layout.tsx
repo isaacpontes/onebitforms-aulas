@@ -11,6 +11,7 @@ export default function RootLayout() {
           <Stack.Screen name="signup" options={{ title: 'Sign Up' }} />
           <Stack.Screen name="confirm-email" options={{ headerShown: false }} />
           <Stack.Screen name="home" options={{ title: 'Home' }} />
+          <Stack.Screen name="forms/edit/[formId]" options={{ title: 'Edit Form' }} />
         </Stack>
       </SessionProvider>
     </ThemeProvider>
