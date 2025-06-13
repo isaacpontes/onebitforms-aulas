@@ -136,8 +136,21 @@ export default function EditFormScreen() {
         <Button title="Save form" onPress={() => saveForm()} />
 
         <View style={styles.buttonsRow}>
-          <Button title="Preview form" style={{ flex: 1 }} variant="outline" onPress={() => { }} />
-          <Button title="Delete form" style={{ flex: 1 }} variant="danger" onPress={deleteForm} />
+          <Button
+            title="Preview form"
+            style={{ flex: 1 }}
+            variant="outline"
+            onPress={() => router.navigate({
+              pathname: '/forms/preview/[formId]',
+              params: { formId: formId }
+            })}
+          />
+          <Button
+            title="Delete form"
+            style={{ flex: 1 }}
+            variant="danger"
+            onPress={deleteForm}
+          />
         </View>
 
         <View style={styles.fieldHeader}>
