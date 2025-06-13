@@ -40,7 +40,7 @@ export const QuickLinks = () => {
         onPress={() => handleCreateForm()}
       />
       <Button title="All forms" variant="outline" onPress={() => router.navigate('/forms/list')} />
-      <Button title="View profile" variant="outline" onPress={() => { }} />
+      <Button title="View profile" variant="outline" onPress={() => router.navigate('/profile')} />
       <Button title="Switch theme" variant="outline" onPress={() => switchTheme()} />
       <Button title="Sign out" variant="danger" onPress={() => signOut()} />
     </View>

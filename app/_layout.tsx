@@ -14,6 +14,7 @@ export default function RootLayout() {
           <Stack.Screen name="forms/list" options={{ title: 'All Forms' }} />
           <Stack.Screen name="forms/show/[formId]" options={{ title: 'Form Details' }} />
           <Stack.Screen name="forms/edit/[formId]" options={{ title: 'Edit Form' }} />
+          <Stack.Screen name="profile" options={{ title: 'View Profile' }} />
         </Stack>
       </SessionProvider>
     </ThemeProvider>
