@@ -10,9 +10,11 @@ export type Form = {
   createdAt: string;
 }
 
+export type FieldKind = 'short_text' | 'long_text' | 'single_option' | 'multiple_option';
+
 export type Field = {
   id: string;
-  kind: 'short_text' | 'long_text' | 'single_option' | 'multiple_option'
+  kind: FieldKind;
   label: string;
   options?: string[];
   isRequired: boolean;

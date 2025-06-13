@@ -6,6 +6,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { Button } from "../ui/Button"
 import { Input } from "../ui/Input"
 import { Switch } from "../ui/Switch"
+import { FieldKindPicker } from "./FieldKindPicker"
 
 interface Props {
   field: Field;
@@ -68,10 +69,9 @@ export const FieldCard: FC<Props> = ({
             style={styles.label}
           />
 
-          <Input
-            placeholder="Choose a field kind"
+          <FieldKindPicker
             value={field.kind}
-            style={styles.label}
+            onChange={(value) => onStateChange(field.id, { kind: value })}
           />
 
           {(field.kind === 'single_option' || field.kind === 'multiple_option') && (
