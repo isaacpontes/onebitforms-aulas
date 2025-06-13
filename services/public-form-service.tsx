@@ -28,6 +28,7 @@ const publicFormService = {
           )
         `)
         .eq('id', formId)
+        .order('field_order', { referencedTable: 'form_fields', ascending: true })
         .single<PublicFormWithFields>();
       if (error) {
         console.log(error);
@@ -54,6 +55,7 @@ const publicFormService = {
       `)
       .eq('id', formId)
       .eq('is_published', true)
+      .order('field_order', { referencedTable: 'form_fields', ascending: true })
       .single<PublicFormWithFields>();
     if (error) {
       console.log(error);
