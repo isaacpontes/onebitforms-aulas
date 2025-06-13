@@ -6,7 +6,8 @@ import { Switch } from "@/components/ui/Switch";
 import { Title } from "@/components/ui/Title";
 import formsService, { Field } from "@/services/forms-service";
 import { Theme, useTheme } from "@/themes/ThemeContext";
-import { useLocalSearchParams } from "expo-router";
+import confirm from "@/utils/confirm";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -14,6 +15,7 @@ export default function EditFormScreen() {
   const { formId } = useLocalSearchParams();
   const { theme } = useTheme();
   const styles = createStyles(theme);
+  const router = useRouter();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -39,6 +41,19 @@ export default function EditFormScreen() {
     await formsService.updateForm(formId, { title, description, isPublished });
     Alert.alert('Success', 'Form saved successfuly!');
   }
+
+  const deleteForm = async () => {
+    if (typeof formId !== 'string') return;
+    confirm(
+      'Delete form',
+      'Are you sure you want to delete this form? This action is permanent.',
+      async () => {
+        await formsService.deleteForm(formId);
+        router.replace('/forms/list');
+      }
+    )
+  }
+
 
   const addField = async () => {
     if (typeof formId !== 'string') return;
@@ -83,7 +98,7 @@ export default function EditFormScreen() {
     updatedFields = updatedFields.map((field, index) => ({ ...field, fieldOrder: index }));
     await formsService.updateField(updatedFields[targetIndex].id, updatedFields[targetIndex]);
     await formsService.updateField(updatedFields[fieldIndex].id, updatedFields[fieldIndex]);
-    
+
     setFields(updatedFields);
   }
 
@@ -122,7 +137,7 @@ export default function EditFormScreen() {
 
         <View style={styles.buttonsRow}>
           <Button title="Preview form" style={{ flex: 1 }} variant="outline" onPress={() => { }} />
-          <Button title="Delete form" style={{ flex: 1 }} variant="danger" onPress={() => { }} />
+          <Button title="Delete form" style={{ flex: 1 }} variant="danger" onPress={deleteForm} />
         </View>
 
         <View style={styles.fieldHeader}>
