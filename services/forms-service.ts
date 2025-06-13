@@ -169,6 +169,74 @@ const formsService = {
       console.log(error);
       Alert.alert('Error', 'Error deleting the form.');
     }
+  },
+
+  addField: async (formId: string, fieldOrder: number) => {
+    const { data, error } = await supabase
+      .from('form_fields')
+      .insert({
+        form_id: formId,
+        label: 'New Field',
+        kind: 'short_text',
+        is_required: false,
+        field_order: fieldOrder
+      })
+      .select(`
+        id,
+        formId: form_id,
+        label,
+        kind,
+        options,
+        isRequired: is_required,
+        fieldOrder: field_order
+      `)
+      .single<Field>();
+    if (error) {
+      console.log(error);
+      Alert.alert('Error', 'Error while creating the form_field.');
+      return;
+    }
+    return data;
+  },
+
+  updateField: async (fieldId: string, updates: Partial<Field>) => {
+    const { data, error } = await supabase
+      .from('form_fields')
+      .update({
+        kind: updates.kind,
+        label: updates.label,
+        options: updates.options,
+        is_required: updates.isRequired,
+        field_order: updates.fieldOrder
+      })
+      .eq('id', fieldId)
+      .select(`
+        id,
+        formId: form_id,
+        label,
+        kind,
+        options,
+        isRequired: is_required,
+        fieldOrder: field_order
+      `)
+      .single<Field>();
+    if (error) {
+      console.log(error);
+      Alert.alert('Error', 'Error while updating the form_field.');
+      return;
+    }
+    return data;
+  },
+
+  removeField: async (fieldId: string) => {
+    const { error } = await supabase
+      .from('form_fields')
+      .delete()
+      .eq('id', fieldId);
+    if (error) {
+      console.log(error);
+      Alert.alert('Error', 'Error while deleting the form_field.');
+    }
   }
 };
 

@@ -1,9 +1,10 @@
+import { FieldCard } from "@/components/forms/FieldCard";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { Switch } from "@/components/ui/Switch";
 import { Title } from "@/components/ui/Title";
-import formsService from "@/services/forms-service";
+import formsService, { Field } from "@/services/forms-service";
 import { Theme, useTheme } from "@/themes/ThemeContext";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -17,6 +18,7 @@ export default function EditFormScreen() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isPublished, setIsPublished] = useState(false);
+  const [fields, setFields] = useState<Field[]>([]);
 
   useEffect(() => {
     if (typeof formId !== 'string') {
@@ -28,6 +30,7 @@ export default function EditFormScreen() {
       setTitle(data.form.title);
       setDescription(data.form.description ?? '');
       setIsPublished(data.form.isPublished);
+      setFields(data.fields ?? []);
     });
   }, []);
 
@@ -35,6 +38,70 @@ export default function EditFormScreen() {
     if (typeof formId !== 'string') return;
     await formsService.updateForm(formId, { title, description, isPublished });
     Alert.alert('Success', 'Form saved successfuly!');
+  }
+
+  const addField = async () => {
+    if (typeof formId !== 'string') return;
+    const field = await formsService.addField(formId, fields.length);
+    if (!field) return;
+    setFields(current => [...current, field]);
+    Alert.alert('Success', 'New field added to the form.');
+  }
+
+  const saveField = async (fieldId: string, field: Field) => {
+    await formsService.updateField(fieldId, field);
+    Alert.alert('Success', 'Field saved.');
+  }
+
+  const moveUp = async (fieldId: string) => {
+    let updatedFields = [...fields];
+    const fieldIndex = updatedFields.findIndex(f => f.id === fieldId);
+    if (fieldIndex < 1) return updatedFields;
+    const targetIndex = fieldIndex - 1;
+
+    const aux = updatedFields[targetIndex];
+    updatedFields[targetIndex] = updatedFields[fieldIndex];
+    updatedFields[fieldIndex] = aux;
+
+    updatedFields = updatedFields.map((field, index) => ({ ...field, fieldOrder: index }));
+    await formsService.updateField(updatedFields[targetIndex].id, updatedFields[targetIndex]);
+    await formsService.updateField(updatedFields[fieldIndex].id, updatedFields[fieldIndex]);
+
+    setFields(updatedFields);
+  }
+
+  const moveDown = async (fieldId: string) => {
+    let updatedFields = [...fields];
+    const fieldIndex = updatedFields.findIndex(f => f.id === fieldId);
+    if (fieldIndex >= fields.length - 1) return updatedFields;
+    const targetIndex = fieldIndex + 1;
+
+    const aux = updatedFields[targetIndex];
+    updatedFields[targetIndex] = updatedFields[fieldIndex];
+    updatedFields[fieldIndex] = aux;
+
+    updatedFields = updatedFields.map((field, index) => ({ ...field, fieldOrder: index }));
+    await formsService.updateField(updatedFields[targetIndex].id, updatedFields[targetIndex]);
+    await formsService.updateField(updatedFields[fieldIndex].id, updatedFields[fieldIndex]);
+    
+    setFields(updatedFields);
+  }
+
+  const updateFieldsState = (fieldId: string, changes: Partial<Field>) => {
+    setFields(current => {
+      const updatedFields = [...current];
+      const fieldIndex = updatedFields.findIndex(f => f.id === fieldId);
+      Object.assign(updatedFields[fieldIndex], changes);
+      return updatedFields;
+    })
+  }
+
+  const removeField = async (fieldId: string) => {
+    setFields(current => {
+      const updatedFields = current.filter(f => f.id !== fieldId)
+      return updatedFields.map((field, index) => ({ ...field, fieldOrder: index }));
+    });
+    await formsService.removeField(fieldId);
   }
 
   return (
@@ -60,9 +127,22 @@ export default function EditFormScreen() {
 
         <View style={styles.fieldHeader}>
           <Title>Fields</Title>
-          <Button title="Add field" variant="outline" onPress={() => { }} />
+          <Button title="Add field" variant="outline" onPress={() => addField()} />
         </View>
 
+        {fields.map(field => (
+          <FieldCard
+            key={field.id}
+            field={field}
+            onSaveField={saveField}
+            onMoveUp={moveUp}
+            onMoveDown={moveDown}
+            onRemove={removeField}
+            onStateChange={updateFieldsState}
+            isFirst={field.fieldOrder === 0}
+            isLast={field.fieldOrder === (fields.length - 1)}
+          />
+        ))}
       </ScrollView>
     </ScreenContainer>
   );
