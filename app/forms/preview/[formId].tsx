@@ -59,10 +59,18 @@ export default function PreviewFormScreen() {
 
   const handleNext = () => {
     if (currentStep < 0 || currentStep >= form.fields.length) return;
+    if (field.isRequired && !answers[field.id]) {
+      Alert.alert('Error', 'This field is required.');
+      return;
+    }
     setCurrentStep(current => current + 1);
   }
 
   const handleSubmit = () => {
+    if (field.isRequired && !answers[field.id]) {
+      Alert.alert('Error', 'This field is required.');
+      return;
+    }
     Alert.alert('Success', 'Your form was submitted successfuly.');
     router.back();
   };
@@ -81,7 +89,36 @@ export default function PreviewFormScreen() {
       onNext={handleNext}
       onBack={handleBack}
     >
-      <Input />
+      {field.kind === 'short_text' && (
+        <Input
+          placeholder="Start typing..."
+          value={answers[field.id]}
+          onChangeText={(text) => setAnswers(current => ({ ...current, [field.id]: text }))}
+        />
+      )}
+
+      {field.kind === 'long_text' && (
+        <FormField.LongText
+          value={answers[field.id]}
+          onChangeText={(text) => setAnswers(current => ({ ...current, [field.id]: text }))}
+        />
+      )}
+
+      {field.kind === 'single_option' && (
+        <FormField.SingleOption
+          value={answers[field.id]}
+          onSelect={(option) => setAnswers(current => ({ ...current, [field.id]: option }))}
+          options={field.options ?? []}
+        />
+      )}
+
+      {field.kind === 'multiple_option' && (
+        <FormField.MultipleOption
+          value={answers[field.id]}
+          onSelect={(option) => setAnswers(current => ({ ...current, [field.id]: option }))}
+          options={field.options ?? []}
+        />
+      )}
     </FormField.Wrapper>
   )
 }

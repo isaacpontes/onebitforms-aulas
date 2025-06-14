@@ -5,6 +5,9 @@ import { StyleSheet, View } from "react-native";
 import { Button } from "../ui/Button";
 import { ScreenContainer } from "../ui/ScreenContainer";
 import { Title } from "../ui/Title";
+import { LongTextField } from "./LongTextField";
+import MultipleOptionField from "./MultipleOptionField";
+import { SingleOptionField } from "./SingleOptionField";
 
 interface WrapperProps {
   field: Field;
@@ -44,7 +47,10 @@ const Wrapper: FC<WrapperProps> = ({ field, isFirst, isLast, onBack, onNext, onS
 };
 
 export default {
-  Wrapper
+  Wrapper,
+  LongText: LongTextField,
+  SingleOption: SingleOptionField,
+  MultipleOption: MultipleOptionField
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({

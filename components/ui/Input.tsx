@@ -8,9 +8,9 @@ export const Input: FC<TextInputProps> = (props) => {
 
   return (
     <TextInput
+      {...props}
       placeholderTextColor={theme.colors.disabled}
       style={[styles.input, props.style]}
-      {...props}
     />
   )
 }
