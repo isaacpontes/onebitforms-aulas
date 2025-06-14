@@ -247,6 +247,52 @@ const formsService = {
       console.log(error);
       Alert.alert('Error', 'Error while deleting the form_field.');
     }
+  },
+
+  getHomeStats: async (userId: string) => {
+    const { data: forms, error: formsError } = await supabase
+      .from('forms')
+      .select('id')
+      .eq('user_id', userId);
+
+    if (formsError) {
+      return {
+        totalForms: 0,
+        totalResponses: 0,
+        latestForm: null
+      }
+    }
+
+    const formIds = forms.map(f => f.id);
+
+    const { count: responsesCount } = await supabase
+      .from('form_responses')
+      .select('id', { count: 'exact', head: true })
+      .in('form_id', formIds);
+
+    const { data: latestForm } = await supabase
+      .from('forms')
+      .select(`
+        id,
+        title,
+        formResponses: form_responses(count)
+      `)
+      .eq('user_id', userId)
+      .eq('is_published', true)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    return {
+      totalForms: formIds.length,
+      totalResponses: responsesCount ?? 0,
+      latestForm: latestForm
+        ? {
+          title: latestForm.title,
+          responses: latestForm.formResponses[0].count
+        }
+        : null
+    };
   }
 };
 

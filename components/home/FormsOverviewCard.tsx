@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 interface Props {
   totalForms: number;
   totalResponses: number;
-  latestForm?: { title: string, responses: number };
+  latestForm: { title: string, responses: number } | null;
 }
 
 export const FormsOverviewCard: FC<Props> = ({ totalForms, totalResponses, latestForm}) => {
