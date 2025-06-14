@@ -1,3 +1,4 @@
+import { ViewResponsesModal } from "@/components/forms/ViewResponsesModal";
 import { Button } from "@/components/ui/Button";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { Title } from "@/components/ui/Title";
@@ -17,6 +18,7 @@ export default function ShowFormScreen() {
   const [form, setForm] = useState<Form | null>(null);
   const [fields, setFields] = useState<Field[]>([]);
   const [responseCount, setResponseCount] = useState(0);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     if (typeof formId !== 'string') {
@@ -31,10 +33,18 @@ export default function ShowFormScreen() {
     });
   }, [formId]);
 
+  if (!form) {
+    return (
+      <ScreenContainer style={{ justifyContent: 'center' }}>
+        <Title align="center">Form not found.</Title>
+      </ScreenContainer>
+    )
+  }
+
   return (
     <ScreenContainer>
-      <Title>{form?.title}</Title>
-      <Text style={styles.description}>{form?.description}</Text>
+      <Title>{form.title}</Title>
+      <Text style={styles.description}>{form.description}</Text>
 
       <View style={styles.statsSection}>
         <Text style={styles.sectionTitle}>Stats</Text>
@@ -45,16 +55,23 @@ export default function ShowFormScreen() {
       <View style={styles.buttonsContainer}>
         <Button
           title="Edit form"
-          onPress={() => router.navigate({ pathname: '/forms/edit/[formId]', params: { formId } })}
+          onPress={() => router.navigate({ pathname: '/forms/edit/[formId]', params: { formId: form.id } })}
           style={styles.button}
           variant="outline"
         />
         <Button
           title="View responses"
-          onPress={() => { }}
+          onPress={() => setIsModalVisible(true)}
           style={styles.button}
         />
       </View>
+
+      <ViewResponsesModal
+        form={form}
+        fields={fields}
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+      />
     </ScreenContainer>
   )
 }

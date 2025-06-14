@@ -22,6 +22,14 @@ export type Field = {
   formId: string;
 }
 
+export type Response = {
+  id: string;
+  formId: string;
+  submittedAt: string;
+  answers: Record<string, string>;
+  metadata: Record<string, string>;
+}
+
 const formsService = {
   createEmptyForm: async (userId: string) => {
     const { data, error } = await supabase
@@ -132,7 +140,6 @@ const formsService = {
       .from('form_responses')
       .select('id, formId: form_id, submittedAt: submitted_at, answers, metadata')
       .eq('form_id', formId)
-      .order('')
 
     if (error || !data) {
       console.log(error);
@@ -140,7 +147,8 @@ const formsService = {
       return [];
     }
 
-    return data;
+    const responses: Response[] = data;
+    return responses;
   },
 
   // Atualizar e excluir um formulário
