@@ -63,6 +63,16 @@ const publicFormService = {
       return;
     }
     return data;
+  },
+
+  submitAnswers: async (formId: string, answers: Record<string, string>) => {
+    const { error } = await supabase.from('form_responses').insert({
+      form_id: formId,
+      answers: answers
+    });
+    if (error) {
+      Alert.alert('Error', 'Error submitting the responses.');
+    }
   }
 };
 

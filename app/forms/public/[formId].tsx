@@ -21,7 +21,7 @@ export default function PreviewFormScreen() {
 
   useEffect(() => {
     if (typeof formId !== 'string') return;
-    publicFormService.getFormWithFields(formId, { preview: true })
+    publicFormService.getFormWithFields(formId, { preview: false })
       .then((data) => {
         if (!data) return Alert.alert('Error', 'Form not found.');
         setForm(data);
@@ -72,8 +72,7 @@ export default function PreviewFormScreen() {
       return;
     }
     await publicFormService.submitAnswers(form.id, answers);
-    Alert.alert('Success', 'Your form was submitted successfuly.');
-    router.back();
+    router.navigate('/forms/thankyou');
   };
 
   const handleBack = () => {
