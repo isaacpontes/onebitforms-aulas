@@ -6,7 +6,7 @@ import formsService, { Field, Form } from "@/services/forms-service";
 import { Theme, useTheme } from "@/themes/ThemeContext";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, Share, StyleSheet, Text, View } from "react-native";
 
 export default function ShowFormScreen() {
   const { formId } = useLocalSearchParams();
@@ -65,6 +65,17 @@ export default function ShowFormScreen() {
           style={styles.button}
         />
       </View>
+
+      <Button
+        title="Share this form!"
+        variant="success"
+        onPress={() => Share.share({
+          title: "Check out my form!",
+          message: `Please answer this form at: onebitforms://forms/public/${form.id}`,
+          url: `onebitforms://forms/public/${form.id}`
+        })}
+        style={{ marginTop: theme.spacing.md }}
+      />
 
       <ViewResponsesModal
         form={form}

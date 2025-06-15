@@ -5,7 +5,7 @@ import { useSession } from "@/providers/SessionContext";
 import { Theme, useTheme } from "@/themes/ThemeContext";
 import { Link, useRouter } from "expo-router";
 import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 export default function Index() {
   const { theme } = useTheme();
@@ -22,6 +22,11 @@ export default function Index() {
   return (
     <ScreenContainer>
       <View style={styles.formContainer}>
+        <Image
+          source={require('@/assets/images/onebitforms-logo.png')}
+          style={styles.logo}
+        />
+
         <Title align="center">Sign in with your email</Title>
         <SignInForm />
 
@@ -41,6 +46,11 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   formContainer: {
     flex: 1,
     justifyContent: 'center',
+  },
+  logo: {
+    height: 150,
+    width: 200,
+    marginHorizontal: 'auto'
   },
   footerText: {
     marginTop: theme.spacing.lg,
